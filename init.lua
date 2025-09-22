@@ -11,20 +11,6 @@ require 'custom/automations'
 --
 require('lazy').setup {
 
-  -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
-  -- Alternatively, use `config = function() ... end` for full control over the configuration.
-  -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
-  --
-  --
-
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -245,9 +231,36 @@ require('lazy').setup {
         },
       }
 
-      for server_name, server_config in pairs(servers) do
-        server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
-        require('lspconfig')[server_name].setup(server_config)
+      --for server_name, server_config in pairs(servers) do
+      --server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
+      --require('lspconfig')[server_name].setup(server_config)
+      --end
+
+      --local function with_caps(cfg)
+      --return vim.tbl_deep_extend('force', {}, cfg or {}, { capabilities = vim.tbl_deep_extend('force', {}, capabilities, (cfg or {}).capabilities or {}) })
+      --end
+      -- prefer new API (Neovim 0.11+), fallback to lspconfig for older versions
+      for name, cfg in pairs(servers) do
+        if cfg.enabled == false then
+          goto continue
+        end
+        cfg.enabled = nil -- not a valid LSP option; remove before passing on
+
+        cfg.capabilities = vim.tbl_deep_extend('force', {}, capabilities, cfg.capabilities or {})
+
+        if vim.lsp and vim.lsp.enable then
+          -- New API: either create a config first...
+          -- local c = vim.lsp.config(name, with_caps(cfg))
+          -- vim.lsp.enable(c)
+          -- ...or just enable directly (shorthand):
+          vim.lsp.config(name, cfg)
+          vim.lsp.enable(name)
+        else
+          -- Old api fallback
+          require('lspconfig')[name].setup(cfg)
+        end
+
+        ::continue::
       end
       -- Ensure the servers and tools above are installed
       --
@@ -283,11 +296,13 @@ require('lazy').setup {
   require 'custom.plugins.nvim-treesitter',
   -- formatting
   require 'custom.plugins.conform',
-  require 'custom.plugins.nvim-eslint',
+  -- require 'custom.plugins.nvim-eslint',
   -- detect indentation
   require 'custom.plugins.sleuth',
   -- auto completion
   require 'custom.plugins.blink',
+  -- better tabs
+  require 'custom.plugins.bufferline',
 
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
