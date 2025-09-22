@@ -8,6 +8,9 @@ vim.g.have_nerd_font = true
 vim.o.number = true
 vim.o.relativenumber = true
 
+-- use term gui colors, for bufferline as it reads the hex gui color alues
+-- of various highlight groups
+vim.opt.termguicolors = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
