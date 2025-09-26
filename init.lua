@@ -321,7 +321,8 @@ require('lazy').setup {
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
+  -- Lazygit Integration
+  require 'custom.plugins.lazygit',
   -- Themes
   require 'custom.themes.tokyonight',
   require 'custom.themes.kanagawa',
