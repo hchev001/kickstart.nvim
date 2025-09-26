@@ -7,7 +7,7 @@ require 'custom/automations'
 --    :Lazy
 --
 --  To update plugins you can run
---    :Lazy update
+--   :Lazy update
 --
 require('lazy').setup {
 
@@ -146,6 +146,13 @@ require('lazy').setup {
         end,
       })
 
+      local signs = {
+        Error = '󰅚 ',
+        Warn = '󰀪 ',
+        Info = '󰋽 ',
+        Hint = '󰌶 ',
+      }
+
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
@@ -160,19 +167,23 @@ require('lazy').setup {
             [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
-        virtual_text = {
-          source = 'if_many',
-          spacing = 2,
-          format = function(diagnostic)
-            local diagnostic_message = {
-              [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
-            }
-            return diagnostic_message[diagnostic.severity]
-          end,
-        },
+        --virtual_text = {
+        --source = 'if_many',
+        -- spacing = 2,
+        -- virt_text_pos = 'eol',
+        -- format = function(diagnostic)
+        --local diagnostic_message = {
+        --[vim.diagnostic.severity.ERROR] = signs['Error'],
+        --[vim.diagnostic.severity.WARN] = signs['Warn'],
+        --[vim.diagnostic.severity.INFO] = signs['Info'],
+        --[vim.diagnostic.severity.HINT] = signs['Hint'],
+        --}
+        --return diagnostic_message[diagnostic.severity]
+        --end,
+        --},
+        virtual_text = false,
+        virtual_lines = { current_line = true },
+        update_in_insert = false,
       }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
@@ -303,7 +314,8 @@ require('lazy').setup {
   require 'custom.plugins.blink',
   -- better tabs
   require 'custom.plugins.bufferline',
-
+  -- better diagnostics
+  require 'custom.plugins.trouble',
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.autopairs',
