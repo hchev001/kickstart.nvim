@@ -324,6 +324,7 @@ require('lazy').setup {
 
   -- Themes
   require 'custom.themes.tokyonight',
+  require 'custom.themes.kanagawa',
   {
     ui = {
       -- If you are using a Nerd Font: set icons to an empty table which will use the
