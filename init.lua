@@ -1,3 +1,15 @@
+-- Utility Functions
+local function file_exists(filename)
+  local f = io.open(filename, 'r')
+  if f then
+    f:close() -- Close the file if it was successfully opened
+    return true
+  else
+    return false
+  end
+end
+--
+
 require 'custom/boot'
 require 'custom/core'
 require 'custom/keymaps'
@@ -8,10 +20,7 @@ require 'custom/automations'
 --
 --  To update plugins you can run
 --   :Lazy update
---
-require('lazy').setup {
-
-  -- LSP Plugins
+local plugins = {
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
@@ -323,31 +332,21 @@ require('lazy').setup {
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- Lazygit Integration
   require 'custom.plugins.lazygit',
+
   -- Themes
   require 'custom.themes.tokyonight',
   require 'custom.themes.kanagawa',
-  {
-    ui = {
-      -- If you are using a Nerd Font: set icons to an empty table which will use the
-      -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-      icons = vim.g.have_nerd_font and {} or {
-        cmd = '⌘',
-        config = '🛠',
-        event = '📅',
-        ft = '📂',
-        init = '⚙',
-        keys = '🗝',
-        plugin = '🔌',
-        runtime = '💻',
-        require = '🌙',
-        source = '📄',
-        start = '🚀',
-        task = '📌',
-        lazy = '💤 ',
-      },
-    },
-  },
 }
+
+-- conditionally load these plugin specs as they may not exist
+-- on every machine used
+if file_exists './lua/work/amazonq.lua' then
+  table.insert(plugins, {
+    require 'work.amazonq',
+  })
+end
+--
+require('lazy').setup(plugins)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
