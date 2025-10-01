@@ -102,66 +102,41 @@ local plugins = {
           --  the definition of its *type*, not where it was *defined*.
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
-          -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
-          ---@param client vim.lsp.Client
-          ---@param method vim.lsp.protocol.Method
-          ---@param bufnr? integer some lsp support methods only in specific files
-          ---@return boolean
-          local function client_supports_method(client, method, bufnr)
-            if vim.fn.has 'nvim-0.11' == 1 then
-              return client:supports_method(method, bufnr)
-            else
-              return client.supports_method(method, { bufnr = bufnr })
-            end
-          end
-
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
+          local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+            buffer = event.buf,
+            group = highlight_augroup,
+            callback = vim.lsp.buf.document_highlight,
+          })
 
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
+          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+            buffer = event.buf,
+            group = highlight_augroup,
+            callback = vim.lsp.buf.clear_references,
+          })
 
-            vim.api.nvim_create_autocmd('LspDetach', {
-              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-              callback = function(event2)
-                vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-              end,
-            })
-          end
+          vim.api.nvim_create_autocmd('LspDetach', {
+            group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+            callback = function(event2)
+              vim.lsp.buf.clear_references()
+              vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+            end,
+          })
 
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>th', function()
-              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
-          end
+          map('<leader>th', function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+          end, '[T]oggle Inlay [H]ints')
         end,
       })
-
-      local signs = {
-        Error = '󰅚 ',
-        Warn = '󰀪 ',
-        Info = '󰋽 ',
-        Hint = '󰌶 ',
-      }
 
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
@@ -177,23 +152,9 @@ local plugins = {
             [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
-        --virtual_text = {
-        --source = 'if_many',
-        -- spacing = 2,
-        -- virt_text_pos = 'eol',
-        -- format = function(diagnostic)
-        --local diagnostic_message = {
-        --[vim.diagnostic.severity.ERROR] = signs['Error'],
-        --[vim.diagnostic.severity.WARN] = signs['Warn'],
-        --[vim.diagnostic.severity.INFO] = signs['Info'],
-        --[vim.diagnostic.severity.HINT] = signs['Hint'],
-        --}
-        --return diagnostic_message[diagnostic.severity]
-        --end,
-        --},
-        virtual_text = false,
+        virtual_text = true,
         virtual_lines = { current_line = true },
-        update_in_insert = false,
+        update_in_insert = true,
       }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
@@ -233,6 +194,23 @@ local plugins = {
             'typescript.tsx',
           },
           enabled = true,
+          settings = {
+            typescript = {
+              diagnostics = {
+                enable = true,
+                reportStyleChecksAsWarnings = true,
+              },
+              suggest = {
+                completeFunctionCalls = true,
+              },
+              javascript = {
+                diagnostics = {
+                  enable = true,
+                  reportStyleChecksAsWarnings = true,
+                },
+              },
+            },
+          },
         },
         --
 
@@ -261,25 +239,15 @@ local plugins = {
       --return vim.tbl_deep_extend('force', {}, cfg or {}, { capabilities = vim.tbl_deep_extend('force', {}, capabilities, (cfg or {}).capabilities or {}) })
       --end
       -- prefer new API (Neovim 0.11+), fallback to lspconfig for older versions
-      for name, cfg in pairs(servers) do
-        if cfg.enabled == false then
+      for server_name, server_cfg in pairs(servers) do
+        if server_cfg.enabled == false then
           goto continue
         end
-        cfg.enabled = nil -- not a valid LSP option; remove before passing on
+        server_cfg.enabled = true
 
-        cfg.capabilities = vim.tbl_deep_extend('force', {}, capabilities, cfg.capabilities or {})
-
-        if vim.lsp and vim.lsp.enable then
-          -- New API: either create a config first...
-          -- local c = vim.lsp.config(name, with_caps(cfg))
-          -- vim.lsp.enable(c)
-          -- ...or just enable directly (shorthand):
-          vim.lsp.config(name, cfg)
-          vim.lsp.enable(name)
-        else
-          -- Old api fallback
-          require('lspconfig')[name].setup(cfg)
-        end
+        server_cfg.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_cfg.capabilities or {})
+        vim.lsp.config(server_name, server_cfg)
+        vim.lsp.enable(server_name)
 
         ::continue::
       end
@@ -348,6 +316,7 @@ if file_exists './lua/work/amazonq.lua' then
 end
 --
 require('lazy').setup(plugins)
+
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
