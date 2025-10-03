@@ -152,8 +152,8 @@ local plugins = {
             [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
         } or {},
-        virtual_text = true,
-        virtual_lines = { current_line = true },
+        virtual_text = false,
+        virtual_lines = false,
         update_in_insert = true,
       }
 
@@ -316,7 +316,6 @@ if file_exists './lua/work/amazonq.lua' then
 end
 --
 require('lazy').setup(plugins)
-
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
