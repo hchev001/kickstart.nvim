@@ -25,4 +25,7 @@ External Requirements:
 - Language Setup:
   - npm i -g eslint_d
 
+## Language Specific Setups
 
+### C#
+- Install via Mason `MasonInstall roslyn` for a C# LSP
