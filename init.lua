@@ -39,7 +39,15 @@ local plugins = {
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Mason must be loaded before its dependents so we need to set it up here.
-      { 'mason-org/mason.nvim', opts = {} },
+      {
+        'mason-org/mason.nvim',
+        opts = {
+          registries = {
+            'github:mason-org/mason-registry',
+            'github:Crashdummyy/mason-registry',
+          },
+        },
+      },
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
