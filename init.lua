@@ -299,6 +299,7 @@ local plugins = {
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'custom.plugins.tiny-inline-diagnostics',
   -- Lazygit Integration
   require 'custom.plugins.lazygit',
 
