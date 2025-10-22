@@ -221,7 +221,6 @@ local plugins = {
           },
         },
         --
-
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -233,6 +232,16 @@ local plugins = {
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
+            },
+          },
+        },
+        roslyn = {
+          settings = {
+            ['csharp|code_lens'] = {
+              dotnet_enable_references_code_lens = true,
+            },
+            ['csharp|completion'] = {
+              dotnet_show_completion_items_from_unimported_namespaces = true,
             },
           },
         },
@@ -287,6 +296,7 @@ local plugins = {
   require 'custom.plugins.whichkey',
   -- fzf
   require 'custom.plugins.telescope',
+  -- better terminal
   require 'custom.plugins.toggleterm',
   -- highlight todo, notes, etc in comments
   require 'custom.plugins.todo-comments',
@@ -310,6 +320,8 @@ local plugins = {
   require 'custom.plugins.tiny-inline-diagnostics',
   -- Lazygit Integration
   require 'custom.plugins.lazygit',
+  require 'custom.language.roslyn',
+
 
   -- Themes
   require 'custom.themes.tokyonight',
