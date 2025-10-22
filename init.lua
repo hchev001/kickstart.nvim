@@ -333,6 +333,7 @@ local plugins = {
   -- Themes
   require 'custom.themes.tokyonight',
   require 'custom.themes.kanagawa',
+  require 'custom.plugins.copilotChat',
 }
 
 -- conditionally load these plugin specs as they may not exist
