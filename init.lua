@@ -116,17 +116,20 @@ local plugins = {
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-            buffer = event.buf,
-            group = highlight_augroup,
-            callback = vim.lsp.buf.document_highlight,
-          })
+          local client = vim.lsp.get_client_by_id(event.data_client_id)
+          if client and client.server_capabilities.documentHighlightProvider then
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.document_highlight,
+            })
 
-          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-            buffer = event.buf,
-            group = highlight_augroup,
-            callback = vim.lsp.buf.clear_references,
-          })
+            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.clear_references,
+            })
+          end
 
           vim.api.nvim_create_autocmd('LspDetach', {
             group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
@@ -303,6 +306,7 @@ local plugins = {
   require 'custom.plugins.nvim-treesitter',
   -- formatting
   require 'custom.plugins.conform',
+  require 'custom.plugins.comment',
   -- require 'custom.plugins.nvim-eslint',
   -- detect indentation
   require 'custom.plugins.sleuth',
@@ -316,12 +320,15 @@ local plugins = {
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'custom.plugins.tiny-inline-diagnostics',
   -- Lazygit Integration
   require 'custom.plugins.lazygit',
   require 'custom.language.roslyn',
 
+  -- work plugins
+  require 'work.amazonq',
 
   -- Themes
   require 'custom.themes.tokyonight',
