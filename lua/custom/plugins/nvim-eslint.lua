@@ -1,4 +1,6 @@
 return {
   'esmuellert/nvim-eslint',
-  opts = {},
+  opts = {
+    useFlatConfig = true,
+  },
 }

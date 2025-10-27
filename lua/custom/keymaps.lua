@@ -56,3 +56,13 @@ keymap.set('n', '<leader>tx', '<cmd>tabclose<CR>', { desc = 'Close current tab' 
 keymap.set('n', '<leader>tn', '<cmd>tabn<CR>', { desc = 'Go to next tab' })
 keymap.set('n', '<leader>tp', '<cmd>tabp<CR>', { desc = 'Go to prev tab' })
 keymap.set('n', '<leader>tf', '<cmd>tabnew %<CR>', { desc = 'Open current buffer in new tab' })
+
+keymap.set('n', '<leader>q', '<cmd>CopilotChatToggle<CR>', { desc = 'Toggle Copilot Chat' })
+keymap.set('n', '<leader>qr', '<cmd>CopilotChatReset<CR>', { desc = 'Reset the chat' })
+keymap.set('n', '<leader>qm', '<cmd>CopilotChatModels<CR>', { desc = 'Select a chat model' })
+keymap.set('n', '<leader>qi', function()
+  local input = vim.fn.input 'Chat prompt: '
+  if input ~= '' then
+    vim.cmd('CopilotChat ' .. vim.fn.shellescape(input))
+  end
+end, { desc = 'Start Copilot Chat with a prompt' })

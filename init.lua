@@ -204,24 +204,7 @@ local plugins = {
             'typescriptreact',
             'typescript.tsx',
           },
-          enabled = true,
-          settings = {
-            typescript = {
-              diagnostics = {
-                enable = true,
-                reportStyleChecksAsWarnings = true,
-              },
-              suggest = {
-                completeFunctionCalls = true,
-              },
-              javascript = {
-                diagnostics = {
-                  enable = true,
-                  reportStyleChecksAsWarnings = true,
-                },
-              },
-            },
-          },
+          enabled = false,
         },
         --
         lua_ls = {
@@ -306,7 +289,7 @@ local plugins = {
   require 'custom.plugins.nvim-treesitter',
   -- formatting
   require 'custom.plugins.conform',
-  require 'custom.plugins.comment',
+  -- require 'custom.plugins.comment',
   -- require 'custom.plugins.nvim-eslint',
   -- detect indentation
   require 'custom.plugins.sleuth',
@@ -322,18 +305,21 @@ local plugins = {
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-  require 'custom.plugins.tiny-inline-diagnostics',
+  -- require 'custom.plugins.tiny-inline-diagnostics',
   -- Lazygit Integration
   require 'custom.plugins.lazygit',
+  -- languages
   require 'custom.language.roslyn',
+  require 'custom.language.typescript-tools',
 
   -- work plugins
-  require 'work.amazonq',
+  -- require 'work.amazonq',
 
   -- Themes
   require 'custom.themes.tokyonight',
   require 'custom.themes.kanagawa',
   require 'custom.plugins.copilotChat',
+  require 'custom.language.lsp-signature',
 }
 
 -- conditionally load these plugin specs as they may not exist
