@@ -206,7 +206,6 @@ local plugins = {
           },
           enabled = false,
         },
-        --
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -233,14 +232,6 @@ local plugins = {
         },
       }
 
-      --for server_name, server_config in pairs(servers) do
-      --server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
-      --require('lspconfig')[server_name].setup(server_config)
-      --end
-
-      --local function with_caps(cfg)
-      --return vim.tbl_deep_extend('force', {}, cfg or {}, { capabilities = vim.tbl_deep_extend('force', {}, capabilities, (cfg or {}).capabilities or {}) })
-      --end
       -- prefer new API (Neovim 0.11+), fallback to lspconfig for older versions
       for server_name, server_cfg in pairs(servers) do
         if server_cfg.enabled == false then
@@ -254,6 +245,9 @@ local plugins = {
 
         ::continue::
       end
+
+      -- configure ruby lsp on its own
+      vim.lsp.enable 'ruby-lsp'
       -- Ensure the servers and tools above are installed
       --
       -- To check the current status of installed tools and/or manually install
@@ -312,7 +306,7 @@ local plugins = {
   require 'custom.language.roslyn',
   require 'custom.language.typescript-tools',
 
-  -- work plugins
+  -- work plugins - so far only using a windows computer for work
   -- require 'work.amazonq',
 
   -- Themes
@@ -324,7 +318,7 @@ local plugins = {
 
 -- conditionally load these plugin specs as they may not exist
 -- on every machine used
-if file_exists './lua/work/amazonq.lua' then
+if file_exists './lua/work/amazonq.lua' and vim.fn.has 'win32' then
   table.insert(plugins, {
     require 'work.amazonq',
   })
